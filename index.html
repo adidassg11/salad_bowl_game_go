@@ -49,23 +49,25 @@
         </form>
         <p id="gameIdDisplay"></p>
 
+
+
         <!-- Add Word Form -->
         <form id="addWordForm">
-            <div class="form-group">
+            <div class="form-group my-2">
                 <label for="word">New word to add:</label>
-                <input type="text" class="form-control" id="word" placeholder="Enter a word">
+                <input type="text" class="form-control" id="word" placeholder="Enter a word" required>
             </div>
-            <div class="form-group">
+            <div class="form-group my-2">
                 <label for="team">Select your team:</label>
                 <select id="team" class="form-control">
                     <option value="1">Team 1</option>
                     <option value="2">Team 2</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Add Word</button>
+            <button type="submit" class="btn btn-primary my-2">Add Word</button>
         </form>
 
-        <div class="form-check">
+        <div class="form-check my-3">
             <input class="form-check-input" type="checkbox" id="toggleCheckbox" checked="true">
             <label class="form-check-label" for="toggleCheckbox">
                 Show/Hide Game Status
@@ -113,7 +115,7 @@
                         console.log(data);
                         // Handle the response from the server if needed
                         const gameId = data.id
-                        document.getElementById("gameIdDisplay").textContent = `Game ID: ${gameId}`;
+                        document.getElementById("gameIdDisplay").textContent = `${gameId}`;
                     })
                     .catch((error) => {
                         console.error("There was a problem with the fetch operation:", error);
@@ -121,8 +123,44 @@
             });
 
             document.getElementById("addWordForm").addEventListener("submit", function(event) {
-                event.preventDefault();
                 // Send a POST request to add a word (you can use fetch or jQuery.ajax)
+
+                event.preventDefault();
+
+                const gameId = document.getElementById("gameIdDisplay").textContent;
+                console.log('game id:', gameId);
+
+                const word = document.getElementById("word").value;
+                console.log('sending word:', word);
+
+                const payload = { game_id: gameId, word: word};
+                const word_creation_url = `/games/${gameId}/words`;
+                console.log('word url:', word_creation_url)
+
+                fetch(word_creation_url, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload) // TODO - add params here if we need
+                })
+                    .then((response) => {
+                        if (!response.ok) {
+                            throw new Error("Network response was not ok");
+                        }
+                        return response.json();
+                    })
+                    .then((data) => {
+                        console.log("successful post for word, response:")
+                        console.log(data);
+                        // Handle the response from the server if needed
+                        // const gameId = data.id
+                        // document.getElementById("gameIdDisplay").textContent = `Game ID: ${gameId}`;
+                    })
+                    .catch((error) => {
+                        console.error("There was a problem with the fetch operation:", error);
+                    });
+
             });
 
             // Update game status (you should implement this using polling or WebSockets)

@@ -91,19 +91,38 @@ func createGame(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+type CreateWordRequest struct {
+	GameID int64  `json:"gameId"`
+	Word   string `json:"word"`
+}
+
 // Creates a new word
 func createWord(c *gin.Context) {
 	gameID := c.Param("id")
 
 	// TODO - check here whether the timer has expired
 
-	word := c.PostForm("word")
-	team := c.PostForm("team")
+	var requestBody CreateWordRequest
+	if err := c.ShouldBindJSON(&requestBody); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// word := c.PostForm("word")  // No longer using the form vars
+	// team := c.PostForm("team")
+
+	word := requestBody.Word
+	team := "1" // TODO - need to actually grab this from the frontend
+
+	fmt.Println("%v %v %v", gameID, word)
 
 	// TODO - need to validate that word and team are correct (ie. right now it's letting us add a blank word to DB despite the 'Allow Null' being FALSE)
 
 	//gameIDInt, err := strconv.ParseInt(gameID, 10, 64)  // THIS is why we need an ORM * SMH *
 	gameIDInt, err := strconv.Atoi(gameID)
+
+	fmt.Println("game id: %v", gameIDInt)
+
 	if err != nil {
 		c.JSON(500, gin.H{"message": err.Error()})
 	}
