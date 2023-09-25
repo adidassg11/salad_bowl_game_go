@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 	"time"
@@ -61,6 +62,11 @@ func main() {
 	router.Run("localhost:8080")
 }
 
+type CreateGameResponse struct {
+	ID       int64     `json:"id"`
+	DateTime time.Time `json:"turn_end_time"`
+}
+
 // Creates a new game in the database
 func createGame(c *gin.Context) {
 	res, err := db.Exec("INSERT INTO games (current_team, turn_end_time) VALUES (?, ?)", 1, time.Now().Add(1*time.Minute)) // TODO - make the time better
@@ -73,8 +79,16 @@ func createGame(c *gin.Context) {
 		c.JSON(500, gin.H{"message": err.Error()})
 	}
 
-	message := fmt.Sprintf("Game created with id {%s}", strconv.FormatInt(id, 10))
-	c.JSON(200, gin.H{"message": message})
+	currentTime := time.Now() // TODO - make this actually correspond to what we put in the DB
+
+	response := CreateGameResponse{
+		ID:       id,
+		DateTime: currentTime,
+	}
+
+	// message := fmt.Sprintf("Game created with id {%s}", strconv.FormatInt(id, 10)) // TODO - return json with the id, not just a string message
+	// c.JSON(200, gin.H{"message": message})
+	c.JSON(http.StatusOK, response)
 }
 
 // Creates a new word
