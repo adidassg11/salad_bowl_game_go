@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Game Dashboard</title>
+    <style>
+        /* Add your CSS styling here */
+    </style>
+</head>
+<body>
+    <h1>Game Dashboard</h1>
+    
+    <!-- Create Game Form -->
+    <form id="createGameForm">
+        <button type="submit">Create Game</button>
+    </form>
+
+    <!-- Add Word Form -->
+    <form id="addWordForm">
+        <input type="text" id="word" placeholder="Enter a word">
+        <select id="team">
+            <option value="1">Team 1</option>
+            <option value="2">Team 2</option>
+        </select>
+        <button type="submit">Add Word</button>
+    </form>
+
+    <!-- Game Status -->
+    <div id="gameStatus">
+        <h2>Game Status</h2>
+        <p>Current Team's Turn: <span id="currentTeam">Team 1</span></p>
+        <p>Time Remaining: <span id="timeRemaining">60 seconds</span></p>
+    </div>
+
+    <script>
+        // JavaScript code to handle form submissions and update game status
+        document.getElementById("createGameForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            // Send a POST request to create a game (you can use fetch or jQuery.ajax)
+            const action = createGameForm.getAttribute("data-action");
+            fetch(action, {
+                method: "POST",
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    console.log(data);
+                    // Handle the response from the server if needed
+                })
+                .catch((error) => {
+                    console.error("There was a problem with the fetch operation:", error);
+                });
+
+
+
+        });
+
+        document.getElementById("addWordForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            // Send a POST request to add a word (you can use fetch or jQuery.ajax)
+        });
+
+        // Update game status (you should implement this using polling or WebSockets)
+        function updateGameStatus() {
+            // Fetch game status from the backend (you can use fetch or jQuery.ajax)
+            // Update the currentTeam and timeRemaining elements with the fetched data
+        }
+
+        // Call updateGameStatus periodically (e.g., every second)
+        setInterval(updateGameStatus, 1000);
+    </script>
+</body>
+</html>
